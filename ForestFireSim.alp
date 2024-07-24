@@ -1,0 +1,1497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************
+	         AnyLogic Project File 
+*************************************************	         
+-->
+<AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.0.202404161236" AlpVersion="8.9.0">
+<Model>
+	<Id>1719074725264</Id>
+	<Name><![CDATA[ForestFireSim]]></Name>
+	<EngineVersion>6</EngineVersion>
+	<JavaPackageName><![CDATA[forestfiresim]]></JavaPackageName>
+	<ModelTimeUnit><![CDATA[Second]]></ModelTimeUnit>
+	<ActiveObjectClasses>
+		<!--   =========   Active Object Class   ========  -->
+		<ActiveObjectClass>
+			<Id>1719074725267</Id>
+			<Name><![CDATA[Main]]></Name>
+			<AdditionalClassCode><![CDATA[//public List<BurningCell> burningCells;]]></AdditionalClassCode>
+			<StartupCode><![CDATA[density = new double[rows][cols];
+humidity = new double[rows][cols];
+burning = new double[rows][cols];
+percentBurnt = new double[rows][cols];
+//burningCells = new ArrayList<>(); // to track the start time of the burning cells when they are fired
+
+// Initialize the arrays with random values between 0 and 1
+initHumidity(); // init humidity of all cells
+initDensity(); // init density of all cells
+initSoil(); // init the soil cells
+initBurning(); // init burning property = 0 for all cells
+initPercentBurnt(); // the percentBurn of all cells is 0.0
+//updateBurning.restart();
+
+// Color the forest canvas based on current variable values
+updateCanvas();
+traceln("Time : " + time());
+]]></StartupCode>
+			<Generic>false</Generic>
+			<GenericParameter>
+				<Id>1719074725273</Id>
+				<Name><![CDATA[1719074725273]]></Name>
+				<GenericParameterValue Class="CodeValue">
+					<Code><![CDATA[T extends Agent]]></Code>
+				</GenericParameterValue>
+				<GenericParameterLabel><![CDATA[Generic parameter:]]></GenericParameterLabel>
+			</GenericParameter>
+			<FlowChartsUsage>ENTITY</FlowChartsUsage>
+			<SamplesToKeep>100</SamplesToKeep>
+			<LimitNumberOfArrayElements>false</LimitNumberOfArrayElements>
+			<ElementsLimitValue>100</ElementsLimitValue>
+			<MakeDefaultViewArea>true</MakeDefaultViewArea>
+			<SceneGridColor/>
+			<SceneBackgroundColor/>
+			<SceneSkybox>null</SceneSkybox>
+			<AgentProperties>
+				<EnvironmentDefinesInitialLocation>true</EnvironmentDefinesInitialLocation>
+				<RotateAnimationTowardsMovement>true</RotateAnimationTowardsMovement>
+				<RotateAnimationVertically>false</RotateAnimationVertically>
+				<VelocityCode Class="CodeUnitValue">
+					<Code><![CDATA[10]]></Code>
+					<Unit Class="SpeedUnits"><![CDATA[MPS]]></Unit>
+				</VelocityCode>
+				<PhysicalLength Class="CodeUnitValue">
+					<Code><![CDATA[1]]></Code>
+					<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
+				</PhysicalLength>
+				<PhysicalWidth Class="CodeUnitValue">
+					<Code><![CDATA[1]]></Code>
+					<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
+				</PhysicalWidth>
+				<PhysicalHeight Class="CodeUnitValue">
+					<Code><![CDATA[1]]></Code>
+					<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
+				</PhysicalHeight>
+			</AgentProperties>
+			<EnvironmentProperties>
+					<EnableSteps>false</EnableSteps>
+					<StepDurationCode Class="CodeUnitValue">
+						<Code><![CDATA[1.0]]></Code>
+						<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+					</StepDurationCode>
+					<SpaceType>CONTINUOUS</SpaceType>
+					<WidthCode><![CDATA[500]]></WidthCode>
+					<HeightCode><![CDATA[500]]></HeightCode>
+					<ZHeightCode><![CDATA[0]]></ZHeightCode>
+					<ColumnsCountCode><![CDATA[100]]></ColumnsCountCode>
+					<RowsCountCode><![CDATA[100]]></RowsCountCode>
+					<NeigborhoodType>MOORE</NeigborhoodType>
+					<LayoutType>USER_DEF</LayoutType>
+					<LayoutTypeApplyOnStartup>true</LayoutTypeApplyOnStartup>
+					<NetworkType>USER_DEF</NetworkType>
+					<NetworkTypeApplyOnStartup>true</NetworkTypeApplyOnStartup>
+					<ConnectionsPerAgentCode><![CDATA[2]]></ConnectionsPerAgentCode>
+					<ConnectionsRangeCode><![CDATA[50]]></ConnectionsRangeCode>
+					<NeighborLinkFractionCode><![CDATA[0.95]]></NeighborLinkFractionCode>
+					<MCode><![CDATA[10]]></MCode>
+			</EnvironmentProperties>
+			<DatasetsCreationProperties>
+				<AutoCreate>true</AutoCreate>
+					<OccurrenceAtTime>true</OccurrenceAtTime>
+					<OccurrenceDate>1719129600000</OccurrenceDate>
+					<OccurrenceTime Class="CodeUnitValue">
+						<Code><![CDATA[0]]></Code>
+						<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+					</OccurrenceTime>
+					<RecurrenceCode Class="CodeUnitValue">
+						<Code><![CDATA[1]]></Code>
+						<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+					</RecurrenceCode>
+			</DatasetsCreationProperties>
+			<ScaleRuler>
+				<Id>1719074725270</Id>
+				<Name><![CDATA[scale]]></Name>
+				<X>0</X><Y>0</Y>
+				<PublicFlag>false</PublicFlag>
+				<PresentationFlag>false</PresentationFlag>
+				<ShowLabel>false</ShowLabel>
+				<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+				<Length>100</Length>
+				<Rotation>0</Rotation>
+				<ScaleType>BASED_ON_LENGTH</ScaleType>
+				<ModelLength>10</ModelLength>
+				<LengthUnits>METER</LengthUnits>
+				<Scale>10</Scale>
+				<InheritedFromParentAgentType>true</InheritedFromParentAgentType>
+			</ScaleRuler>
+			<CurrentLevel>1719074725274</CurrentLevel>
+			<ConnectionsId>1719074725268</ConnectionsId>
+			<Variables>
+				<Variable Class="PlainVariable">
+					<Id>1719170451444</Id>
+					<Name><![CDATA[rows]]></Name>
+					<X>560</X><Y>-70</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[50]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719170464564</Id>
+					<Name><![CDATA[cols]]></Name>
+					<X>560</X><Y>-50</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[50]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719170474436</Id>
+					<Name><![CDATA[density]]></Name>
+					<X>560</X><Y>100</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double[][]]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719171388740</Id>
+					<Name><![CDATA[duration]]></Name>
+					<X>560</X><Y>400</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[5]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719171461508</Id>
+					<Name><![CDATA[timer]]></Name>
+					<X>560</X><Y>440</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719171814253</Id>
+					<Name><![CDATA[prevTime]]></Name>
+					<X>560</X><Y>480</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[time()]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719185300984</Id>
+					<Name><![CDATA[humidity]]></Name>
+					<X>560</X><Y>130</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double[][]]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719185645550</Id>
+					<Name><![CDATA[burning]]></Name>
+					<Description><![CDATA[This holds the burning condition for every single cell in the forest grid. 
+= 0 -> not burning
+> 0 -> means burning]]></Description>
+					<X>560</X><Y>160</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double[][]]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719190515824</Id>
+					<Name><![CDATA[rateOfChange]]></Name>
+					<X>560</X><Y>360</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.5]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719192281527</Id>
+					<Name><![CDATA[thresholdHumidity]]></Name>
+					<Description><![CDATA[The humidity above which fire will not burn in a cell]]></Description>
+					<X>700</X><Y>130</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.7]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719263891352</Id>
+					<Name><![CDATA[burnDuration]]></Name>
+					<Description><![CDATA[The burn duration of the latest fire that has been manually spawned .
+If burnDuration > 0, it means that a fire that has been manually spawned is burning.
+It will only get reset after passing thresholdBurnDuration seconds.]]></Description>
+					<X>700</X><Y>160</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719264018941</Id>
+					<Name><![CDATA[thresholdBurnDuration]]></Name>
+					<Description><![CDATA[This is the minimum time (seconds) required for another new fire spawn]]></Description>
+					<X>700</X><Y>190</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[8]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719270971561</Id>
+					<Name><![CDATA[randomBurn]]></Name>
+					<Description><![CDATA[If 1 -> the cells will autoupdate the burning variable at each step (For testing purposes)
+If 0 -> the cells will never possess any random update in the burning variable ]]></Description>
+					<X>560</X><Y>300</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[boolean]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[false]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719276790668</Id>
+					<Name><![CDATA[fcPrevTime]]></Name>
+					<Description><![CDATA[This stores per time step prevTime for the fireClock]]></Description>
+					<X>560</X><Y>640</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719276975850</Id>
+					<Name><![CDATA[fcTimePassed]]></Name>
+					<X>560</X><Y>660</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719330421641</Id>
+					<Name><![CDATA[spreadDuration]]></Name>
+					<Description><![CDATA[This is the minimum burn time that is required before a fire spawned in a cell spreads to a new cell]]></Description>
+					<X>900</X><Y>190</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[6]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719376096184</Id>
+					<Name><![CDATA[soilPercentage]]></Name>
+					<Description><![CDATA[This is the percentage of soil from the cells of entire map. These soil cells will never catch fire. Their densities will also never update.]]></Description>
+					<X>560</X><Y>330</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[10]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719415123510</Id>
+					<Name><![CDATA[percentBurnt]]></Name>
+					<Description><![CDATA[This stores the percentage of a cell being burnt down. If it is done 1.0 (fully burnt), it should turn black and the cell will be dead like soil cells.]]></Description>
+					<X>560</X><Y>190</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double[][]]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719416008168</Id>
+					<Name><![CDATA[globalBurnRate]]></Name>
+					<Description><![CDATA[This is the seed burn rate for each cell that burns continuously. At each step when a cell burns, the percentBurnt variable gets updated with this
+
+percentBurnt of the cell = globalBurnRate * burn value of that cell
+
+This is due to the intuition that the more the tree density in the cell, the higher will be its burning value and the higher the rate it will have for burning out]]></Description>
+					<X>560</X><Y>220</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.02]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719422610623</Id>
+					<Name><![CDATA[forestIgnited]]></Name>
+					<Description><![CDATA[If 1 -> the entire forest has caught fire]]></Description>
+					<X>560</X><Y>530</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[boolean]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[false]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719422645931</Id>
+					<Name><![CDATA[forestBurnt]]></Name>
+					<Description><![CDATA[The entire forest has burnt down]]></Description>
+					<X>560</X><Y>560</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[boolean]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[false]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1719422959457</Id>
+					<Name><![CDATA[forestIgniteTime]]></Name>
+					<Description><![CDATA[To store the time taken to ignite the whole forest]]></Description>
+					<X>560</X><Y>590</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[-1]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1721090260963</Id>
+					<Name><![CDATA[cellSize]]></Name>
+					<X>560</X><Y>-30</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[10]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1721091196659</Id>
+					<Name><![CDATA[showLogs]]></Name>
+					<Description><![CDATA[If 1 -> enable the logStats]]></Description>
+					<X>560</X><Y>-10</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[1]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1721660657490</Id>
+					<Name><![CDATA[windDirection]]></Name>
+					<Description><![CDATA[1 of 8 possible directions (0-7)
+
+Direction indices:
+0: top-left, 1: top, 2: top-right
+3: left,     					4: right
+5: bottom-left, 6: bottom, 7: bottom-right]]></Description>
+					<X>900</X><Y>100</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[4]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1721660671179</Id>
+					<Name><![CDATA[windVelocity]]></Name>
+					<Description><![CDATA[As this value will add up with the initial burning value of a cell (0-1), the range should be (0-0.5). 
+
+0.5 causes the fire to start violently, so the burndown will be faster for these wind ignited cells. Best to keep the value around 0.3]]></Description>
+					<X>900</X><Y>130</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.3]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1721660677986</Id>
+					<Name><![CDATA[thresholdWindVelocity]]></Name>
+					<X>900</X><Y>160</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.05]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+			</Variables>
+			<Events>
+				<Event>
+					<Id>1719175450247</Id>
+					<Name><![CDATA[clock]]></Name>
+					<Description><![CDATA[This event runs in each unit time of the model. So it eventually has everything that runs on each step]]></Description>
+					<X>560</X><Y>30</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties TriggerType="timeout" Mode="cyclic">
+						<Timeout Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</Timeout>
+						<Rate Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
+						</Rate>
+						<OccurrenceAtTime>true</OccurrenceAtTime>
+						<OccurrenceDate>1719216000000</OccurrenceDate>
+						<OccurrenceTime Class="CodeUnitValue">
+							<Code><![CDATA[0]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</OccurrenceTime>
+						<RecurrenceCode Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</RecurrenceCode>
+						<Condition><![CDATA[false]]></Condition>
+					</Properties>
+					<Action><![CDATA[// Increase or decrease density randomly after duration seconds
+
+timer += time() - prevTime; // Increment timer by delta time
+prevTime = time();
+//traceln("prevTime = " + prevTime);
+//traceln("timer = " + timer);
+if (showLogs == 1){logStats();}
+
+if (timer >= duration) { // Check if duration time has passed (convert minutes to milliseconds)
+    timer = 0; // Reset timer
+	traceln("timer reset to 0");
+	
+	// Update the variables
+	updateDensity(density);
+	updateHumidity(humidity);
+	// this section is for handling the fire activities (random or coordinated)
+	fireClock();
+}
+// Update canvas colors based on new variable values
+updateCanvas();
+]]></Action>
+				</Event>
+				<Event>
+					<Id>1719324418917</Id>
+					<Name><![CDATA[setFire]]></Name>
+					<Description><![CDATA[This event will set fire cyclically after every thresholdBurnDuration seconds]]></Description>
+					<X>1500</X><Y>20</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties TriggerType="timeout" Mode="cyclic">
+						<Timeout Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</Timeout>
+						<Rate Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
+						</Rate>
+						<OccurrenceAtTime>true</OccurrenceAtTime>
+						<OccurrenceDate>1719388800000</OccurrenceDate>
+						<OccurrenceTime Class="CodeUnitValue">
+							<Code><![CDATA[5]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</OccurrenceTime>
+						<RecurrenceCode Class="CodeUnitValue">
+							<Code><![CDATA[thresholdBurnDuration]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</RecurrenceCode>
+						<Condition><![CDATA[false]]></Condition>
+					</Properties>
+					<Action><![CDATA[if(!randomBurn){
+	// initiate a coordinated fire in this block of code
+	// find the least humid cell
+	int[] pos = findLeastHumid();
+	if(pos != null){
+		setFireInCell(pos[0], pos[1], 0); // It has no windEffect
+		
+		// this block is for burnCellAsync
+		// set the async burning event based on the particular cell
+		// create_burnCellAsync(0, SECOND, pos[0], pos[1]);
+		
+		// this block is for cyclic update of the burning cells using updateBurning event
+		// double startTime = time(); // Record the start time
+    	// burningCells.add(new BurningCell(pos[0], pos[1], startTime));
+		
+	}else{
+		// no more cell to set fire
+		if(!forestIgnited){
+			forestIgnited = true;
+			forestIgniteTime = time()/60;
+			traceln("Time taken to ignite the entire forest : " + forestIgniteTime + " minutes");
+		}
+	}
+	// 	if(burnDuration == 0.0){
+// 		if(fcTimePassed >= thresholdBurnDuration){
+// 			burnDuration = 0.01;
+// 			// find the least humid cell
+// 			int[] pos = findLeastHumid();
+// 			setFire(pos[0], pos[1]);
+// 			fcTimePassed = 0.0;
+// 		}
+// 	}
+// 	else{
+// 		// one or more cells are already burning
+// 		// handle the spread
+		
+// 		// handle the respawn of a new fire
+// 		burnDuration += fcTimePassed;
+// 		if(burnDuration >= thresholdBurnDuration){
+// 			burnDuration = 0.01;
+// 			// find the least humid cell
+// 			int[] pos = findLeastHumid();
+// 			setFireInCell(pos[0], pos[1]);
+// 			fcTimePassed = 0.0;
+// 		}
+// 	}
+}]]></Action>
+				</Event>
+				<Event>
+					<Id>1719330045731</Id>
+					<Name><![CDATA[spreadFire]]></Name>
+					<Description><![CDATA[This recurring event searches for currently burning cells and then spreads fire from those cells (after every burnDuration seconds) to an adjacent new cell after meeting certain conditions : 
+
+- if any adjacent new cell has the least humidity
+- if its humidity < thresholdHumidity
+- if it is not burning already 
+
+(To Do) 
+This event should be separately triggered once by each of the new fire that is spawn manually. But now, it is a general cyclic event]]></Description>
+					<X>1500</X><Y>50</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties TriggerType="timeout" Mode="cyclic">
+						<Timeout Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</Timeout>
+						<Rate Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
+						</Rate>
+						<OccurrenceAtTime>true</OccurrenceAtTime>
+						<OccurrenceDate>1719388800000</OccurrenceDate>
+						<OccurrenceTime Class="CodeUnitValue">
+							<Code><![CDATA[0]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</OccurrenceTime>
+						<RecurrenceCode Class="CodeUnitValue">
+							<Code><![CDATA[spreadDuration]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</RecurrenceCode>
+						<Condition><![CDATA[false]]></Condition>
+					</Properties>
+					<Action><![CDATA[for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+    	if(burning[i][j] > 0 && percentBurnt[i][j] > 0 && percentBurnt[i][j] < 1){
+    		// this cell should ignite one adjacent cell (if applicable)
+    		traceln("SpreadFire at " + time());
+    		spreadFireFrom(i, j);
+    	}
+    }
+}]]></Action>
+				</Event>
+				<Event>
+					<Id>1721084630578</Id>
+					<Name><![CDATA[updateBurning]]></Name>
+					<Description><![CDATA[A cyclic event to housekeep all the burnt cell statuses]]></Description>
+					<X>1500</X><Y>80</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties TriggerType="timeout" Mode="cyclic">
+						<Timeout Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</Timeout>
+						<Rate Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
+						</Rate>
+						<OccurrenceAtTime>true</OccurrenceAtTime>
+						<OccurrenceDate>1721116800000</OccurrenceDate>
+						<OccurrenceTime Class="CodeUnitValue">
+							<Code><![CDATA[0]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</OccurrenceTime>
+						<RecurrenceCode Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</RecurrenceCode>
+						<Condition><![CDATA[false]]></Condition>
+					</Properties>
+					<Action><![CDATA[double currentTime = time();
+
+//if (burningCells != null){
+for (int x = 0; x < rows; x++) {
+	for (int y = 0; y < rows; y++){
+	    if(burning[x][y] > 0){
+		    // BurningCell cell = burningCells.get(i);
+		    // int x = cell.x;
+		    // int y = cell.y;
+		    
+		    // Calculate the elapsed time since the cell started burning
+		    // double elapsedTime = currentTime - cell.startTime;
+		    double prevPercentBurnt = percentBurnt[x][y];
+		    
+		    // Increment the percentBurnt value based on elapsed time
+		    percentBurnt[x][y] += burning[x][y] * globalBurnRate;
+		    traceln("cell " + x + ", " + y + " updated. From " + prevPercentBurnt + " -> " + percentBurnt[x][y]);	    
+				
+		    // Check if the cell is fully burnt
+		    if (percentBurnt[x][y] >= 1.0) {
+		        percentBurnt[x][y] = 1.0;
+		        density[x][y] = 0.0;
+		        burning[x][y] = 0.0;
+		        // burningCells.remove(i);
+		        // i--; // Adjust the index after removal
+		        traceln("Burnt the cell: " + x + ", " + y);
+		        traceln("burning value of the burnt cell: " + burning[x][y]);
+		    }
+	    }
+	}
+}
+]]></Action>
+				</Event>
+			</Events>
+			<Functions>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719183139164</Id>
+					<Name><![CDATA[updateDensity]]></Name>
+					<X>1280</X><Y>280</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[density]]></Name>
+						<Type><![CDATA[double[][]]]></Type>
+					</Parameter>
+					<Body><![CDATA[traceln("updateDensity");
+// Update density randomly for each cell
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+    	if(density[i][j] > 0){
+    		// we will only consider cells that are not soil
+	        double change = (Math.random() - 0.5) * rateOfChange; // Random change in density (-0.05 to +0.05)
+	        density[i][j] = Math.max(0.1, Math.min(1, density[i][j] + change)); // Adjust density within range [0, 1]
+    	}
+    }
+}
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719183299860</Id>
+					<Name><![CDATA[updateCanvas]]></Name>
+					<Description><![CDATA[This should draw 
+- a greenShade for non-burning cells, and 
+- a redShade for burning cells
+- a brownShade for soil cells
+- a blackShade for fully burnt cells]]></Description>
+					<X>1280</X><Y>480</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+    	if(burning[i][j] == 0){
+    		if(density[i][j] == 0 && percentBurnt[i][j] == 0.0){
+	    		//traceln("Coloring soil cell x,y : " + i + ", " + j);
+	    		// this is a soil cell, brown color
+	    		Color shadeOfBrown = new Color((float) 0.7,(float) 0.5,(float) 0.2);
+	    		canvas.fillRectangle(j * cellSize, i * cellSize, cellSize, cellSize, shadeOfBrown);
+    		}else if(density[i][j] > 0 && percentBurnt[i][j] == 0.0){
+	    		// this is a tree cell
+		        float greenShade = (float) (1.0 - density[i][j]); // the higher the density, the darker the shade
+		        Color shadeOfGreen = new Color(0, Math.max((float) (0.25), (float) greenShade), 0);
+		        canvas.fillRectangle(j * cellSize, i * cellSize, cellSize, cellSize, shadeOfGreen);
+    		}else if(density[i][j] == 0 && percentBurnt[i][j] == 1.0){
+    			// the cell is already burnt
+    			traceln("The cell " + i + ", " + j + " is already burnt");
+    			Color shadeOfBlack = new Color(0, 0, 0);
+				canvas.fillRectangle(j * cellSize, i * cellSize, cellSize, cellSize, shadeOfBlack);
+    		}
+    	}else{ // burning cell with burning > 0
+    		if(percentBurnt[i][j] < 1.0){
+	    		// this is still a burning cell
+	    		float redShade = (float) (1.0 - burning[i][j]);
+		        Color shadeOfRed = new Color(Math.max((float) (0.45), redShade), 0, 0);
+		        canvas.fillRectangle(j * cellSize, i * cellSize, cellSize, cellSize, shadeOfRed);
+    		}else{
+    			// the cell is already burnt
+    			traceln("The cell " + i + ", " + j + " is already burnt");
+    			Color shadeOfBlack = new Color(0, 0, 0);
+				canvas.fillRectangle(j * cellSize, i * cellSize, cellSize, cellSize, shadeOfBlack);
+    		}
+    	}
+    }
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719185421092</Id>
+					<Name><![CDATA[initHumidity]]></Name>
+					<X>1280</X><Y>140</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        humidity[i][j] = Math.random(); // Random humidity between 0 and 1
+    }
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719186343555</Id>
+					<Name><![CDATA[initDensity]]></Name>
+					<X>1280</X><Y>80</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        density[i][j] = Math.random(); // Random humidity between 0 and 1
+    }
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719186390063</Id>
+					<Name><![CDATA[initBurning]]></Name>
+					<X>1280</X><Y>170</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        burning[i][j] = 0;
+    }
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719186470148</Id>
+					<Name><![CDATA[updateHumidity]]></Name>
+					<X>1280</X><Y>310</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[humidity]]></Name>
+						<Type><![CDATA[double[][]]]></Type>
+					</Parameter>
+					<Body><![CDATA[traceln("updateHumidity");
+// Update density randomly for each cell
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        double change = (Math.random() - 0.5) * rateOfChange; // Random change in density (-0.05 to +0.05)
+        humidity[i][j] = Math.max(0, Math.min(1, humidity[i][j] + change)); // Adjust density within range [0, 1]
+    }
+}
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719186470969</Id>
+					<Name><![CDATA[updateRandomBurning]]></Name>
+					<Description><![CDATA[Used only for random value based periodic burn update (ignoring other factors)]]></Description>
+					<X>1280</X><Y>400</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[burning]]></Name>
+						<Type><![CDATA[double[][]]]></Type>
+					</Parameter>
+					<Body><![CDATA[traceln("updateRandomBurning");
+// Update burning value randomly for each cell
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        double change = (Math.random() - 0.5) * rateOfChange; // Random change in density (-0.05 to +0.05)
+        burning[i][j] = Math.max(0, Math.min(1, burning[i][j] + change)); // Adjust density within range [0, 1]
+    }
+}
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719270766869</Id>
+					<Name><![CDATA[setFireInCell]]></Name>
+					<Description><![CDATA[Sets fire in the dedicated cell
+When windEffect == 1, we want to set the burning value proportional to the wind velocity]]></Description>
+					<X>1500</X><Y>200</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[x]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[y]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[windEffect]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Body><![CDATA[// ignite the cell
+// set the value based on the density value
+burning[x][y] = Math.min(1, density[x][y] + windEffect * windVelocity + 0.01); 
+//traceln("The cell [" + x + "][" + y + "] has started burning at value : " + burning[x][y]);]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[int[]]]></ReturnType>
+					<Id>1719271439049</Id>
+					<Name><![CDATA[findLeastHumid]]></Name>
+					<X>1500</X><Y>160</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[// new code without position bias
+int[] minPos = null;
+double minHumidity = 1.1;
+List<int[]> minPosList = new ArrayList<>();
+
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        if (humidity[i][j] < minHumidity && humidity[i][j] < thresholdHumidity && burning[i][j] == 0 && density[i][j] > 0 && percentBurnt[i][j] == 0) {
+            minHumidity = humidity[i][j];
+            minPosList.clear();  // Clear the list since we found a new minimum
+            minPosList.add(new int[]{i, j});
+            traceln("Min humidity : " + minHumidity + ", x : " + i + ", y : " + j);
+        } else if (humidity[i][j] == minHumidity && humidity[i][j] < thresholdHumidity && burning[i][j] == 0 && density[i][j] > 0 && percentBurnt[i][j] == 0) {
+            minPosList.add(new int[]{i, j});
+        }
+    }
+}
+
+// Randomly select one cell from the list of least humid cells
+if (!minPosList.isEmpty()) {
+    Random rand = new Random();
+    minPos = minPosList.get(rand.nextInt(minPosList.size()));
+}
+
+return minPos;
+
+// ----------- Position Bias ---------------
+// int[] minPos = null;
+// double minHumidity = 1.1;
+
+// for (int i = 0; i < rows; i++) {
+//     for (int j = 0; j < cols; j++) {
+//         if (humidity[i][j] < minHumidity && humidity[i][j] < thresholdHumidity && burning[i][j] == 0 && density[i][j] > 0 && percentBurnt[i][j] == 0) {
+//             minHumidity = humidity[i][j];
+//             traceln("Min humidity : " + minHumidity + ", x : " + i + ", y : " + j);
+//             minPos = new int[]{i, j};
+//         }
+//     }
+// }
+// return minPos;]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719272434812</Id>
+					<Name><![CDATA[fireClock]]></Name>
+					<Description><![CDATA[This function housekeeps the burning stats of the cells. It runs each time inside "clock" event. If the burning timer is over its timelimit, this function resets and manages everything]]></Description>
+					<X>1500</X><Y>120</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[fcTimePassed += (time() - fcPrevTime);
+fcPrevTime = time();
+
+if (randomBurn){
+	// the forest will change its burning state randomly at each timestep
+	updateRandomBurning(burning);
+}
+else{
+	// initiate a coordinated fire in this block of code
+
+	// start the first fire
+// 	if(burnDuration == 0.0){
+// 		if(fcTimePassed >= thresholdBurnDuration){
+// 			burnDuration = 0.01;
+// 			// find the least humid cell
+// 			int[] pos = findLeastHumid();
+// 			setFire(pos[0], pos[1]);
+// 			fcTimePassed = 0.0;
+// 		}
+// 	}
+// 	else{
+// 		// one or more cells are already burning
+// 		// handle the spread
+		
+// 		// handle the respawn of a new fire
+// 		burnDuration += fcTimePassed;
+// 		if(burnDuration >= thresholdBurnDuration){
+// 			burnDuration = 0.01;
+// 			// find the least humid cell
+// 			int[] pos = findLeastHumid();
+// 			setFire(pos[0], pos[1]);
+// 			fcTimePassed = 0.0;
+// 		}
+// 	}
+	
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719329151755</Id>
+					<Name><![CDATA[spreadFireFrom]]></Name>
+					<Description><![CDATA[In this method, we spread fire to 1 or more cells based on two criteria :
+1) At first if the windVelocity in the forest is greater than thresholdWindVelocity, we light up 3 adjacent cells favorable to wind direction. This lighting up also has windEffect = 1 (making it burn more brightly)
+2) Then we select 1 least humid cell in a regular way out of 5 remaining adjacent cells (total adjacent cells = 8). We light up 1 cell based on a 50-50 probability after that. This lighting up has windEffect = 0
+]]></Description>
+					<X>1500</X><Y>240</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[x]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[y]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Body><![CDATA[int[][] directions = {
+    {-1, -1}, {-1, 0}, {-1, 1},
+    {0, -1},         {0, 1},
+    {1, -1}, {1, 0}, {1, 1}
+};
+
+// Define wind direction index and its two adjacent direction indices
+Map<Integer, int[]> windDirectionIndices = new HashMap<>();
+windDirectionIndices.put(1, new int[]{1, 0, 2});
+windDirectionIndices.put(6, new int[]{6, 5, 7});
+windDirectionIndices.put(4, new int[]{4, 2, 7});
+windDirectionIndices.put(3, new int[]{3, 0, 5});
+windDirectionIndices.put(2, new int[]{2, 1, 4});
+windDirectionIndices.put(0, new int[]{0, 1, 3});
+windDirectionIndices.put(7, new int[]{7, 6, 4});
+windDirectionIndices.put(5, new int[]{5, 6, 0});
+
+int[] windIndices = windDirectionIndices.get(windDirection);
+
+int rows = density.length;
+int cols = density[0].length;
+List<Integer> ignitedIndices = new ArrayList<>();
+
+// First, light up the cells in the wind direction
+if (windVelocity > thresholdWindVelocity){
+	for (int index : windIndices) {
+	    int[] dir = directions[index];
+	    int newX = x + dir[0];
+	    int newY = y + dir[1];
+	
+	    if (newX >= 0 && newX < rows && newY >= 0 && newY < cols) {
+	        if (humidity[newX][newY] < thresholdHumidity && burning[newX][newY] == 0 && density[newX][newY] > 0 && percentBurnt[newX][newY] == 0) {
+	            setFireInCell(newX, newY, 1); // affected by wind
+	            traceln("Wind Ignition from position [" + x + "][" + y + "] to [" + newX + "][" + newY + "]");
+	            ignitedIndices.add(index);
+	        }
+	    }
+	}
+}
+
+// Then, find the least humid cell among the remaining adjacent cells
+double minHumidity = Double.MAX_VALUE;
+int[] minPos = null;
+int willBurn = (int) (Math.random() * 2);
+
+if (willBurn == 1){
+	for (int i = 0; i < directions.length; i++) {
+	    if (!ignitedIndices.contains(i)) {
+	        int[] dir = directions[i];
+	        int newX = x + dir[0];
+	        int newY = y + dir[1];
+	
+	        if (newX >= 0 && newX < rows && newY >= 0 && newY < cols) {
+	            if (humidity[newX][newY] < minHumidity && humidity[newX][newY] < thresholdHumidity && burning[newX][newY] == 0 && density[newX][newY] > 0 && percentBurnt[newX][newY] == 0) {
+	                minHumidity = humidity[newX][newY];
+	                minPos = new int[]{newX, newY};
+	            }
+	        }
+	    }
+	}
+	if (minPos != null) {
+	    setFireInCell(minPos[0], minPos[1], 0); // not affected by wind
+	    traceln("Non-wind Ignition from position [" + x + "][" + y + "] to [" + minPos[0] + "][" + minPos[1] + "]");
+	}
+}
+
+
+
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719373881962</Id>
+					<Name><![CDATA[initSoil]]></Name>
+					<Description><![CDATA[This will initiate some cells with 0 density, which will make it a soil cell. This function will be called after the initDensity function. Any kind of interaction is avoided with these cells throughout the model]]></Description>
+					<X>1280</X><Y>110</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[int totalCells = rows * cols;
+int soilCells = (int) (totalCells * soilPercentage / 100);
+traceln("Total soil cells : " + soilCells);
+
+// Create a list of all cell positions
+List<int[]> cellPositions = new ArrayList<>();
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        cellPositions.add(new int[]{i, j});
+    }
+}
+
+// Shuffle the list to randomize the positions
+Collections.shuffle(cellPositions);
+
+// Set the first 'soilCells' number of cells to have density 0
+for (int i = 0; i < soilCells; i++) {
+    int[] pos = cellPositions.get(i);
+    int x = pos[0];
+    int y = pos[1];
+    density[x][y] = 0.0;
+    
+}
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1719416607200</Id>
+					<Name><![CDATA[initPercentBurnt]]></Name>
+					<Description><![CDATA[This will set all the percentage to 0. Because none of them are burnt at all at the start]]></Description>
+					<X>1280</X><Y>200</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[traceln("initPercentBurnt");
+
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+        percentBurnt[i][j] = 0.0; // Random humidity between 0 and 1
+    }
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1721090972379</Id>
+					<Name><![CDATA[logStats]]></Name>
+					<Description><![CDATA[Just shows the current value of the variables of all cells]]></Description>
+					<X>1280</X><Y>370</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[traceln("-----------------------");
+traceln("-----------------------");
+for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+    	if(burning[i][j] > 0 || percentBurnt[i][j] > 0){
+	    	traceln("----|| Cell " + i +", " + j + " : ");
+	    	traceln("----|| -----> density : " + density[i][j]);
+	    	traceln("----|| -----> humidity : " + humidity[i][j]);
+	    	traceln("----|| -----> burning : " + burning[i][j]);
+	    	traceln("----|| -----> percentBurnt : " + percentBurnt[i][j]);
+    	}
+    	
+    }
+    traceln("-----------------------");
+}
+traceln("");]]></Body>
+				</Function>
+			</Functions>
+			<AgentLinks>
+				<AgentLink>
+					<Id>1719074725268</Id>
+					<Name><![CDATA[connections]]></Name>
+					<X>50</X><Y>-50</Y>
+					<Label><X>15</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<HandleReceiveInConnections>false</HandleReceiveInConnections>
+					<AgentLinkType>COLLECTION_OF_LINKS</AgentLinkType>
+					<AgentLinkBidirectional>true</AgentLinkBidirectional>
+					<MessageType><![CDATA[Object]]></MessageType>
+					<LineStyle>SOLID</LineStyle>
+					<LineWidth>1</LineWidth>
+					<LineColor>-16777216</LineColor>
+					<LineZOrder>UNDER_AGENTS</LineZOrder>
+					<LineArrow>NONE</LineArrow>
+					<LineArrowPosition>END</LineArrowPosition>
+				</AgentLink>
+			</AgentLinks>
+
+
+			<Presentation>
+				<Level>
+					<Id>1719074725274</Id>
+					<Name><![CDATA[level]]></Name>
+					<X>0</X><Y>0</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<Z>0</Z>
+					<LevelVisibility>DIM_NON_CURRENT</LevelVisibility>
+
+			<Presentation>
+				<Canvas>
+					<Id>1719165439420</Id>
+					<Name><![CDATA[canvas]]></Name>
+					<X>0</X><Y>0</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>	
+					<Width>500</Width>
+					<Height>500</Height>
+					<Rotation>0</Rotation>
+				</Canvas>
+				<Text>
+					<Id>1719171957804</Id>
+					<Name><![CDATA[Time]]></Name>
+					<X>820</X><Y>10</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[text]]></Text>
+					<TextCode><![CDATA[time()]]></TextCode>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>28</Size>
+						<Style>1</Style>
+					</Font>
+					<Alignment>CENTER</Alignment>
+				</Text>
+			</Presentation>
+
+				</Level>
+			</Presentation>
+
+		</ActiveObjectClass>
+	</ActiveObjectClasses>	
+	<DifferentialEquationsMethod>EULER</DifferentialEquationsMethod>
+	<MixedEquationsMethod>RK45_NEWTON</MixedEquationsMethod>
+	<AlgebraicEquationsMethod>MODIFIED_NEWTON</AlgebraicEquationsMethod>
+	<AbsoluteAccuracy>1.0E-5</AbsoluteAccuracy>
+	<FixedTimeStep>0.001</FixedTimeStep>
+	<RelativeAccuracy>1.0E-5</RelativeAccuracy>
+	<TimeAccuracy>1.0E-5</TimeAccuracy>
+	<Frame>
+		<Width>1000</Width>
+		<Height>600</Height>
+	</Frame>
+	<Database>
+		<Logging>false</Logging>
+		<AutoExport>false</AutoExport>
+		<ShutdownCompact>false</ShutdownCompact>
+		<ImportSettings>
+		</ImportSettings>
+		<ExportSettings>
+		</ExportSettings>
+	</Database>
+	
+	<RunConfiguration ActiveObjectClassId="1719074725267">
+		<Id>1719074725279</Id>
+		<Name><![CDATA[RunConfiguration]]></Name>
+		<MaximumMemory>512</MaximumMemory>
+		<ModelTimeProperties>
+			<StopOption><![CDATA[Stop at specified time]]></StopOption>
+			<InitialDate><![CDATA[1719014400000]]></InitialDate>	
+			<InitialTime><![CDATA[0.0]]></InitialTime>	
+			<FinalDate><![CDATA[1721606400000]]></FinalDate>	
+			<FinalTime><![CDATA[100.0]]></FinalTime>	
+		</ModelTimeProperties>
+		<AnimationProperties>
+			<StopNever>true</StopNever>
+			<ExecutionMode>realTimeScaled</ExecutionMode>
+			<RealTimeScale>1.0</RealTimeScale>
+			<EnableZoomAndPanning>true</EnableZoomAndPanning>
+			<EnableDeveloperPanel>false</EnableDeveloperPanel>
+			<ShowDeveloperPanelOnStart>false</ShowDeveloperPanelOnStart>
+		</AnimationProperties>
+		<Inputs>		
+		</Inputs>
+		<Outputs>
+		</Outputs>
+	</RunConfiguration>
+	<Experiments>	
+		<!--   =========   Simulation Experiment   ========  -->
+		<SimulationExperiment ActiveObjectClassId="1719074725267">
+			<Id>1719074725276</Id>
+			<Name><![CDATA[Simulation]]></Name>
+			<CommandLineArguments><![CDATA[]]></CommandLineArguments>
+			<MaximumMemory>512</MaximumMemory>
+			<RandomNumberGenerationType>fixedSeed</RandomNumberGenerationType>
+			<CustomGeneratorCode>new Random()</CustomGeneratorCode>
+			<SeedValue>1</SeedValue>
+			<SelectionModeForSimultaneousEvents>LIFO</SelectionModeForSimultaneousEvents>
+			<VmArgs><![CDATA[]]></VmArgs>
+			<LoadRootFromSnapshot>false</LoadRootFromSnapshot>
+
+			<Presentation>
+				<Text>
+					<Id>1719074725278</Id>
+					<Name><![CDATA[text]]></Name>
+					<X>50</X><Y>30</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-12490271</Color>
+					<Text><![CDATA[ForestFireSim]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>24</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+			</Presentation>
+
+			<Parameters>			
+			</Parameters>			
+			<PresentationProperties>
+				<EnableZoomAndPanning>true</EnableZoomAndPanning>
+				<ExecutionMode><![CDATA[realTimeScaled]]></ExecutionMode>
+				<Title><![CDATA[ForestFireSim : Simulation]]></Title>	
+				<EnableDeveloperPanel>true</EnableDeveloperPanel>
+				<ShowDeveloperPanelOnStart>false</ShowDeveloperPanelOnStart>
+				<RealTimeScale>1.0</RealTimeScale>
+			</PresentationProperties>
+			<ModelTimeProperties>
+				<StopOption><![CDATA[Never]]></StopOption>
+				<InitialDate><![CDATA[1719014400000]]></InitialDate>	
+				<InitialTime><![CDATA[0.0]]></InitialTime>	
+				<FinalDate><![CDATA[1721606400000]]></FinalDate>	
+				<FinalTime><![CDATA[100.0]]></FinalTime>	
+			</ModelTimeProperties>
+			<BypassInitialScreen>true</BypassInitialScreen>
+		</SimulationExperiment>	
+	</Experiments>
+	<JavaClasses>
+		<!--   =========   Java Class   ========  -->
+		<JavaClass>
+			<Id>1721084905711</Id>
+			<Name><![CDATA[BurningCell]]></Name>
+			<Description><![CDATA[The burningCells ArrayList is a list of BurningCell class objects. This object holds the individual cells which started burning on the first place. So they have x, y and a startTime to track which time they started. We dont need to track any other burning value, because they are already tracked by the other matrices like burning, percentBurnt etc. The latter variables get cyclically updated per second by the event updateBurning]]></Description>
+			<Text><![CDATA[/**
+ * BurningCell
+ */	
+public class BurningCell implements Serializable {
+
+	int x;
+    int y;
+    double startTime;
+
+    BurningCell(int x, int y, double startTime) {
+        this.x = x;
+        this.y = y;
+        this.startTime = startTime;
+    }
+
+	/**
+	 * This number is here for model snapshot storing purpose<br>
+	 * It needs to be changed when this class gets changed
+	 */ 
+	private static final long serialVersionUID = 1L;
+
+}]]></Text>
+		</JavaClass>
+	</JavaClasses>
+    <RequiredLibraryReference>
+		<LibraryName><![CDATA[com.anylogic.libraries.modules.markup_descriptors]]></LibraryName>
+		<VersionMajor>1</VersionMajor>
+		<VersionMinor>0</VersionMinor>
+		<VersionBuild>0</VersionBuild>
+    </RequiredLibraryReference>
+</Model>
+</AnyLogicWorkspace>
