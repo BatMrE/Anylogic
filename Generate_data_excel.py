@@ -12,3 +12,8 @@ excelOutputFile.setCellValue("Y", 1, 1, 4);
 excelOutputFile.writeDataSet(datasetYSamples, 1, 2, 3);
 excelOutputFile.setCellValue("fcPrevTime", 1, 1, 6);
 excelOutputFile.writeDataSet(dataset_fcPrevTime, 1, 2, 5);
+
+
+# incorrect 
+# excelOutputFile.setCellValue("density", 1, 1, 18);
+# excelOutputFile.writeDataSet(dataset_density, 1, 2, 17);
